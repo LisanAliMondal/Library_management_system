@@ -1,27 +1,31 @@
 # Library Management System
 
-A React-based Library Management System with Tailwind CSS.
+A full-stack Library Management System with React, Node.js, Express, and MongoDB.
 
-## Installation
+## Frontend Installation
 
 ```bash
 npm install
+npm start
 ```
 
-## Run
+## Backend Installation
 
 ```bash
+cd backend
+npm install
 npm start
 ```
 
 ## Features
 
 - **Login**: Admin and User roles with password masking
-- **Admin Access**: Maintenance, Reports, Transactions
-- **User Access**: Reports, Transactions
+- **Admin Access**: Maintenance, Reports, Transactions, Product Details
+- **User Access**: Reports, Transactions, Product Details
 - **Maintenance Module**: Add/Update Books, Add/Update Membership
-- **Reports Module**: Book Available search
+- **Reports Module**: Master Lists, Active Issues, Overdue Returns
 - **Transactions Module**: Book Issue, Return Book with Fine calculation
+- **Backend API**: RESTful API with MongoDB
 
 ## Validations
 
