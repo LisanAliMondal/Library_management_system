@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const PayFine = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { returnBook } = useData();
+  const { fetchBooks, fetchIssues } = useData();
   const { user, logout } = useAuth();
   const bookData = location.state || {};
   
@@ -35,14 +35,28 @@ const PayFine = () => {
     }
   }, [returnDate, actualReturnDate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (fine > 0 && !finePaid) {
       setError('Please pay the fine before completing the return');
       return;
     }
-    returnBook(bookData.id);
-    navigate('/transactions');
+    try {
+      const response = await fetch(`http://localhost:5001/api/issues/${bookData.issueId}/return`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actualReturnDate, fine, finePaid, remarks })
+      });
+      if (response.ok) {
+        fetchBooks();
+        fetchIssues();
+        navigate('/transaction-confirmation', { state: { message: 'Transaction completed successfully.' } });
+      } else {
+        setError('Failed to return book');
+      }
+    } catch (err) {
+      setError('Error connecting to server');
+    }
   };
 
   const handleLogout = () => {

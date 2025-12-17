@@ -27,6 +27,11 @@ const Transactions = () => {
           <div className="text-xl font-bold">Pay Fine</div>
           <div className="text-sm mt-2 opacity-90">Pay pending fines</div>
         </Link>
+        <Link to="/cancel-transaction" className="bg-gray-500 text-white p-8 rounded-lg text-center hover:bg-gray-600 shadow-lg transform hover:scale-105 transition">
+          <div className="text-5xl mb-3">❌</div>
+          <div className="text-xl font-bold">Cancel Transaction</div>
+          <div className="text-sm mt-2 opacity-90">Cancel book issue</div>
+        </Link>
       </div>
     </Layout>
   );

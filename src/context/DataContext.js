@@ -1,26 +1,45 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
-  const [books, setBooks] = useState([
-    { id: 1, name: 'The Great Gatsby', author: 'F. Scott Fitzgerald', type: 'book', serialNo: 'B001', available: true, category: 'Fiction', cost: '15.99', procurementDate: '2024-01-10' },
-    { id: 2, name: 'Inception', author: 'Christopher Nolan', type: 'movie', serialNo: 'M001', available: true, category: 'Sci-Fi', cost: '19.99', procurementDate: '2024-01-15' },
-    { id: 3, name: '1984', author: 'George Orwell', type: 'book', serialNo: 'B002', available: false, category: 'Fiction', cost: '12.99', procurementDate: '2024-01-12' }
-  ]);
+  const [books, setBooks] = useState([]);
+  const [members, setMembers] = useState([]);
+
+  const fetchBooks = () => {
+    fetch('http://localhost:5001/api/books')
+      .then(res => res.json())
+      .then(data => setBooks(data))
+      .catch(err => console.error('Error fetching books:', err));
+  };
+
+  const fetchMembers = () => {
+    fetch('http://localhost:5001/api/members')
+      .then(res => res.json())
+      .then(data => setMembers(data))
+      .catch(err => console.error('Error fetching members:', err));
+  };
+
+  useEffect(() => {
+    fetchBooks();
+    fetchMembers();
+    fetchIssues();
+  }, []);
   
-  const [members, setMembers] = useState([
-    { id: 1, memberNo: 'M001', name: 'John Doe', email: 'john@example.com', phone: '1234567890', startDate: '2024-01-01', endDate: '2024-07-01', status: 'active' }
-  ]);
+
   
-  const [issuedBooks, setIssuedBooks] = useState([
-    { id: 1, bookName: 'The Great Gatsby', author: 'F. Scott Fitzgerald', issueDate: '2024-01-15', returnDate: '2024-01-30', remarks: '' }
-  ]);
+  const [issuedBooks, setIssuedBooks] = useState([]);
+
+  const fetchIssues = () => {
+    fetch('http://localhost:5001/api/issues')
+      .then(res => res.json())
+      .then(data => setIssuedBooks(data))
+      .catch(err => console.error('Error fetching issues:', err));
+  };
 
   const addBook = (book) => setBooks([...books, { ...book, id: books.length + 1 }]);
   const updateBook = (id, updatedBook) => setBooks(books.map(b => b.id === id ? { ...b, ...updatedBook } : b));
-  const addMember = (member) => setMembers([...members, { ...member, id: members.length + 1 }]);
-  const updateMember = (id, updatedMember) => setMembers(members.map(m => m.id === id ? { ...m, ...updatedMember } : m));
+
   const issueBook = (issue) => {
     setIssuedBooks([...issuedBooks, { ...issue, id: issuedBooks.length + 1 }]);
     setBooks(books.map(b => b.name === issue.bookName ? { ...b, available: false } : b));
@@ -28,7 +47,7 @@ export const DataProvider = ({ children }) => {
   const returnBook = (id) => setIssuedBooks(issuedBooks.filter(b => b.id !== id));
 
   return (
-    <DataContext.Provider value={{ books, members, issuedBooks, addBook, updateBook, addMember, updateMember, issueBook, returnBook }}>
+    <DataContext.Provider value={{ books, members, issuedBooks, issueBook, returnBook, fetchBooks, fetchMembers, fetchIssues }}>
       {children}
     </DataContext.Provider>
   );

@@ -4,12 +4,12 @@ import Layout from '../components/Layout';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 
-const MasterBooks = () => {
+const MasterMovies = () => {
   const { books } = useData();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const booksList = books.filter(b => b.type === 'book');
+  const moviesList = books.filter(b => b.type === 'movie');
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
@@ -24,7 +24,7 @@ const MasterBooks = () => {
   return (
     <Layout>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Master List of Books</h2>
+        <h2 className="text-3xl font-bold">Master List of Movies</h2>
         <div className="flex gap-4">
           <Link to="/reports" className="bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 font-semibold">Reports</Link>
           <Link to={user?.role === 'admin' ? '/maintenance' : '/reports'} className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 font-semibold">Home</Link>
@@ -45,7 +45,7 @@ const MasterBooks = () => {
             </tr>
           </thead>
           <tbody>
-            {booksList.map((book, idx) => (
+            {moviesList.map((book, idx) => (
               <tr key={book._id} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                 <td className="border border-gray-300 p-3">{book.serialNo}</td>
                 <td className="border border-gray-300 p-3">{book.name}</td>
@@ -71,4 +71,4 @@ const MasterBooks = () => {
   );
 };
 
-export default MasterBooks;
+export default MasterMovies;

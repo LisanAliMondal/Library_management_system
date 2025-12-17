@@ -7,11 +7,14 @@ import { useAuth } from '../context/AuthContext';
 const BookIssue = () => {
   const [bookName, setBookName] = useState('');
   const [author, setAuthor] = useState('');
+  const [serialNo, setSerialNo] = useState('');
+  const [type, setType] = useState('');
+  const [memberNo, setMemberNo] = useState('');
   const [issueDate, setIssueDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
   const [remarks, setRemarks] = useState('');
   const [error, setError] = useState('');
-  const { books, issueBook } = useData();
+  const { books, fetchBooks, fetchIssues } = useData();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -20,6 +23,8 @@ const BookIssue = () => {
     const book = books.find(b => b.name === name && b.available);
     if (book) {
       setAuthor(book.author);
+      setSerialNo(book.serialNo);
+      setType(book.type);
     }
   };
 
@@ -47,14 +52,26 @@ const BookIssue = () => {
     setReturnDate(date);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!bookName || !issueDate || !returnDate) {
+    if (!bookName || !memberNo || !issueDate || !returnDate) {
       setError('Please fill all required fields');
       return;
     }
-    issueBook({ bookName, author, issueDate, returnDate, remarks });
-    navigate('/transactions');
+    try {
+      const response = await fetch('http://localhost:5001/api/issues', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookName, author, serialNo, type, memberNo, issueDate, returnDate, remarks, status: 'pending' })
+      });
+      if (response.ok) {
+        navigate('/transaction-confirmation', { state: { message: 'Book issue request submitted successfully. Awaiting admin approval.' } });
+      } else {
+        setError('Failed to submit request');
+      }
+    } catch (err) {
+      setError('Error connecting to server');
+    }
   };
 
   const handleLogout = () => {
@@ -78,13 +95,17 @@ const BookIssue = () => {
           <select value={bookName} onChange={(e) => handleBookChange(e.target.value)} className="w-full border p-2 rounded" required>
             <option value="">Select Book</option>
             {books.filter(b => b.available).map(book => (
-              <option key={book.id} value={book.name}>{book.name}</option>
+              <option key={book._id} value={book.name}>{book.name}</option>
             ))}
           </select>
         </div>
         <div className="mb-4">
           <label className="block mb-2 font-semibold">Enter Author</label>
           <input type="text" value={author} readOnly className="w-full border p-2 rounded bg-gray-100" />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2 font-semibold">Membership Number *</label>
+          <input type="text" value={memberNo} onChange={(e) => setMemberNo(e.target.value)} className="w-full border p-2 rounded" required />
         </div>
         <div className="mb-4">
           <label className="block mb-2 font-semibold">Issue Date</label>

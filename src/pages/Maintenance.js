@@ -8,8 +8,7 @@ const Maintenance = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    navigate('/logout-confirmation');
   };
 
   const categories = [
@@ -34,7 +33,25 @@ const Maintenance = () => {
         <Link to="/product-details" className="bg-orange-500 text-white p-4 rounded-lg text-center hover:bg-orange-600 shadow font-semibold">Product Details</Link>
       </div>
 
+      <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h3 className="text-xl font-bold mb-4">Book/Movie Management</h3>
+        <div className="flex gap-4 mb-6">
+          <Link to="/add-book" className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 font-semibold">Add Book/Movie</Link>
+          <Link to="/update-book" className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 font-semibold">Update Book/Movie</Link>
+        </div>
+        <h3 className="text-xl font-bold mb-4 mt-6">Membership Management</h3>
+        <div className="flex gap-4 mb-6">
+          <Link to="/add-membership" className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 font-semibold">Add Membership</Link>
+          <Link to="/update-membership" className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 font-semibold">Update Membership</Link>
+        </div>
+        <h3 className="text-xl font-bold mb-4 mt-6">User Management</h3>
+        <div className="flex gap-4">
+          <Link to="/user-management" className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 font-semibold">Manage Users</Link>
+        </div>
+      </div>
+
       <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h3 className="text-xl font-bold mb-4">Category Codes</h3>
         <table className="w-full border-collapse">
           <thead>
             <tr className="bg-blue-600 text-white">

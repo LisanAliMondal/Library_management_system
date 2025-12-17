@@ -15,7 +15,42 @@ router.post('/', async (req, res) => {
   try {
     const issue = new Issue(req.body);
     await issue.save();
-    await Book.findOneAndUpdate({ name: req.body.bookName }, { available: false });
+    res.json(issue);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/pending', async (req, res) => {
+  try {
+    const issues = await Issue.find({ status: 'pending' });
+    res.json(issues);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id/approve', async (req, res) => {
+  try {
+    const issue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      { status: 'issued' },
+      { new: true }
+    );
+    await Book.findOneAndUpdate({ name: issue.bookName }, { available: false });
+    res.json(issue);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/:id/reject', async (req, res) => {
+  try {
+    const issue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      { status: 'rejected' },
+      { new: true }
+    );
     res.json(issue);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -40,6 +75,7 @@ router.put('/:id/return', async (req, res) => {
 router.get('/overdue', async (req, res) => {
   try {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const issues = await Issue.find({ 
       status: 'issued',
       returnDate: { $lt: today }

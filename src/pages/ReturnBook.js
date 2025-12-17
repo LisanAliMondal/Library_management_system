@@ -5,6 +5,7 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 
 const ReturnBook = () => {
+  const [selectedIssue, setSelectedIssue] = useState(null);
   const [bookName, setBookName] = useState('');
   const [author, setAuthor] = useState('');
   const [serialNo, setSerialNo] = useState('');
@@ -12,29 +13,29 @@ const ReturnBook = () => {
   const [returnDate, setReturnDate] = useState('');
   const [remarks, setRemarks] = useState('');
   const [error, setError] = useState('');
-  const { issuedBooks, books } = useData();
+  const { issuedBooks } = useData();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const availableSerialNos = books.map(b => b.serialNo);
-
-  const handleBookChange = (name) => {
-    setBookName(name);
-    const issued = issuedBooks.find(b => b.bookName === name);
+  const handleBookChange = (issueId) => {
+    const issued = issuedBooks.find(b => b._id === issueId);
     if (issued) {
+      setSelectedIssue(issued);
+      setBookName(issued.bookName);
       setAuthor(issued.author);
-      setIssueDate(issued.issueDate);
-      setReturnDate(issued.returnDate);
+      setSerialNo(issued.serialNo);
+      setIssueDate(new Date(issued.issueDate).toISOString().split('T')[0]);
+      setReturnDate(new Date(issued.returnDate).toISOString().split('T')[0]);
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!bookName || !serialNo || !returnDate) {
+    if (!selectedIssue || !returnDate) {
       setError('Please fill all required fields');
       return;
     }
-    navigate('/pay-fine', { state: { bookName, author, serialNo, issueDate, returnDate, remarks } });
+    navigate('/pay-fine', { state: { issueId: selectedIssue._id, bookName, author, serialNo, issueDate, returnDate, remarks } });
   };
 
   const handleLogout = () => {
@@ -55,10 +56,10 @@ const ReturnBook = () => {
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow">
         <div className="mb-4">
           <label className="block mb-2 font-semibold">Enter Book Name</label>
-          <select value={bookName} onChange={(e) => handleBookChange(e.target.value)} className="w-full border p-2 rounded" required>
+          <select onChange={(e) => handleBookChange(e.target.value)} className="w-full border p-2 rounded" required>
             <option value="">Select Book</option>
-            {issuedBooks.map((book, idx) => (
-              <option key={idx} value={book.bookName}>{book.bookName}</option>
+            {issuedBooks.map((issue) => (
+              <option key={issue._id} value={issue._id}>{issue.bookName}</option>
             ))}
           </select>
         </div>
@@ -67,13 +68,8 @@ const ReturnBook = () => {
           <textarea value={author} readOnly className="w-full border p-2 rounded bg-gray-100" rows="2"></textarea>
         </div>
         <div className="mb-4">
-          <label className="block mb-2 font-semibold">Serial No <span className="text-red-500">*</span></label>
-          <select value={serialNo} onChange={(e) => setSerialNo(e.target.value)} className="w-full border p-2 rounded" required>
-            <option value="">Select Serial No</option>
-            {availableSerialNos.map((serial, idx) => (
-              <option key={idx} value={serial}>{serial}</option>
-            ))}
-          </select>
+          <label className="block mb-2 font-semibold">Serial No</label>
+          <input type="text" value={serialNo} readOnly className="w-full border p-2 rounded bg-gray-100" />
         </div>
         <div className="mb-4">
           <label className="block mb-2 font-semibold">Issue Date</label>

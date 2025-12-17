@@ -8,8 +8,7 @@ const Reports = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    navigate('/logout-confirmation');
   };
 
   return (

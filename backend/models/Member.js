@@ -5,9 +5,12 @@ const memberSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
+  address: { type: String },
+  aadharNo: { type: String },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
-  status: { type: String, enum: ['active', 'cancelled'], default: 'active' }
+  status: { type: String, enum: ['active', 'cancelled'], default: 'active' },
+  pendingFine: { type: Number, default: 0 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Member', memberSchema);

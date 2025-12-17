@@ -21,7 +21,7 @@ const ProductDetails = () => {
           </thead>
           <tbody>
             {books.map(book => (
-              <tr key={book.id} className="border-b">
+              <tr key={book._id} className="border-b">
                 <td className="p-2">{book.serialNo}</td>
                 <td className="p-2">{book.name}</td>
                 <td className="p-2">{book.author}</td>
